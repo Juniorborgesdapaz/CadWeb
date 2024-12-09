@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block titulo_conteudo %}
+
+    Listagem de Categoria
+
+{% endblock titulo_conteudo %}
+
+{% block conteudo %}
+
+    <button type="button" class="btn btn-primary" onclick="location.href='{% url 'form_categoria' %}'">Novo Produto</button> <br><br>
+    <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Descrição</th>
+                <th scope="col">Ordem</th>
+                <th scope="col">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for categoria in lista %}
+            <tr>
+                <td>{{categoria.id}}</td>
+                <td>{{categoria.nome}}</td>
+                <td>{{categoria.ordem}}</td>
+                <td>
+                    <button type="button" class="btn btn-info" onclick="location.href='{% url 'detalhe_categoria' categoria.id%}'">Detalhes</button>
+                    <!-- <button type="button" class="btn btn-warning">Editar</button> -->
+                    <button type="button" class="btn btn-warning" onclick="location.href='{% url 'editar_categoria' categoria.id %}'">Editar</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmClose(location.href='{% url 'delete_categotia' categoria.id %}')">Excluir</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        function confirmClose(url) {
+            const confirmar = confirm("Confirme para excluir a categoria selecionada ?");
+            window.location.href = location.href='{% url 'lista' %}';   
+        }
+    </script>
+
+
+{% endblock conteudo %}
