@@ -79,13 +79,11 @@ WSGI_APPLICATION = 'pweb.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-   'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+   'default': dj_database_url.parse( 'postgres://neondb_owner:VH7gz5JZDKwm@ep-delicate-glade-a4vtd7d2-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require')
 }
-
-
+#user:neondb_owner
+#senha:VH7gz5JZDKwm
+#ulr: postgresql://ep-delicate-glade-a4vtd7d2-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
