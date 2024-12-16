@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from .models import *
 from .forms import *
 
+
 def index(request):
     return render(request,'index.html')
 
@@ -16,16 +17,13 @@ def form_categoria(request):
         form = CategoriaForm(request.POST)
         if form.is_valid():
             form.save()
+            
             return redirect('lista')
-            # categoria = form.save(commit=False)
-            # categoria.nome = form.data['nome']
-            # categoria.ordem = form.data['ordem']
+           
     else: 
         form = CategoriaForm()
     
-    # contexto = {
-    #  'form': form, #Caso tenha mais informações para serem passada, utilizar esse contexto   
-    # }
+
     return render(request, 'categoria/formulario.html', {'form': form,})
 
 
