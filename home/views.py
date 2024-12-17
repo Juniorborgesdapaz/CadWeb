@@ -1,14 +1,14 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from .models import *
 from .forms import *
-
 
 def index(request):
     return render(request,'index.html')
 
 def categoria(request): 
     contexto = {
-        'lista': Categoria.objects.all().order_by('id'),
+        'lista': Categoria.objects.all().order_by('-id'),
     }
     return render(request, 'categoria/lista.html', contexto)
 
@@ -16,19 +16,24 @@ def form_categoria(request):
     if (request.method == 'POST'):
         form = CategoriaForm(request.POST)
         if form.is_valid():
-            form.save()
-            
-            return redirect('lista')
-           
+            salvando = form.save()
+            lista=[]
+            lista.append(salvando)
+            messages.success(request, 'Operação realizda com Sucesso.')
+            return render(request, 'categoria/lista.html', {'lista':lista,})
+        
     else: 
         form = CategoriaForm()
     
-
     return render(request, 'categoria/formulario.html', {'form': form,})
 
 
-def editar_categoria(request, pk):
-    categoria = Categoria.objects.get(pk=pk)
+def editar_categoria(request, id):
+    try:
+        categoria = Categoria.objects.get(pk=id)
+    except:
+        messages.error(request, 'Não encotramos seus registros')
+        return redirect('lista')
 
     if (request.method == 'POST'):
         form = CategoriaForm(request.POST, instance=categoria)
@@ -36,30 +41,33 @@ def editar_categoria(request, pk):
             categoria = form.save()
             lista=[]
             lista.append(categoria)
-            return redirect('lista')
+            messages.success(request, 'Operação realizda com Sucesso.')
+            return render(request, 'categoria/lista.html', {'lista':lista,})
 
     else: 
         form = CategoriaForm(instance=categoria)
     
-    # contexto = {
-    #     'form': form,
-    # }
     return render(request, 'categoria/formulario.html', {'form':form,})
 
-def delete_categotia(request, pk):
-    categoria = Categoria.objects.get(pk=pk)
-    categoria.delete()
-    form = CategoriaForm()
-    # contexto = {
-    #     'form': form,
-    # }
-    return  render(request, 'categoria/lista.html')
 
-def detalhe_categoria(request, pk):
-    categoria = Categoria.objects.get(pk=pk)
-    form = CategoriaForm(instance=categoria)
-    print(form)
-    contexto = {
-        'form': form,
-    }
-    return render(request, 'categoria/detail.html', contexto)
+def remover_categoria(request, id):
+    try:
+        categoria = Categoria.objects.get(pk=id)
+        categoria.delete()
+        messages.success(request, 'Operação realizda com Sucesso.')
+    except:
+        messages.error(request, 'Não encotramos seus registros')
+        return redirect('lista')
+    
+    return redirect('lista')
+    # return render(request, 'categoria/lista.html')
+
+
+def detalhe_categoria(request, id):
+    try:
+        categoria = get_object_or_404(Categoria, pk=id)
+    except:
+        messages.error(request, 'Não encotramos seus registros')
+        return redirect('lista')
+
+    return render(request, 'categoria/detalhes.html', {'categoria':categoria,})
