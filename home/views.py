@@ -41,7 +41,7 @@ def editar_categoria(request, id):
             categoria = form.save()
             lista=[]
             lista.append(categoria)
-            messages.success(request, 'Operação realizda com Sucesso.')
+            messages.warning(request, 'Edição realizda com Sucesso.')
             return render(request, 'categoria/lista.html', {'lista':lista,})
 
     else: 
@@ -54,7 +54,7 @@ def remover_categoria(request, id):
     try:
         categoria = Categoria.objects.get(pk=id)
         categoria.delete()
-        messages.success(request, 'Operação realizda com Sucesso.')
+        messages.error(request, 'Exclusão realizda com Sucesso.')
     except:
         messages.error(request, 'Não encotramos seus registros')
         return redirect('lista')
