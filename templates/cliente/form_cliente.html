@@ -1,0 +1,19 @@
+<!-- form_cliente.html -->
+
+{% extends 'base.html' %}
+
+{% block titulo_conteudo %}
+    Cadastro de Cliente
+{% endblock %}
+
+{% block conteudo %}
+    <h2>Cadastro de Cliente</h2>
+    
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Salvar</button>
+    </form>
+    
+    <a href="{% url 'lista_cliente' %}" class="btn btn-secondary">Voltar</a>
+{% endblock %}

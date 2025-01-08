@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block titulo_conteudo %}
+    Listagem de Clientes
+{% endblock titulo_conteudo %}
+
+{% block conteudo %}
+    <div class="barrabotoes mb-3">
+        <button type="button" class="btn btn-primary btn-sm" onclick="location.href='{% url 'cadastrar_cliente' %}'">Novo Cliente</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="location.href='{% url 'lista_cliente' %}'">Recarregar</button>
+    </div>
+
+    <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Nome</th>
+                <th scope="col">cpf</th>
+                <th scope="col">data de nascimento</th>
+                <th scope="col">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if lista %}
+                {% for cliente in lista %}
+                <tr>
+                    <td>{{ cliente.id }}</td>
+                    <td>{{ cliente.nome }}</td>
+                    <td>{{ cliente.cpf }}</td>
+                    <td>{{ cliente.datanasc }}</td>
+                    <td>
+                        <button type="button" class="btn btn-info btn-sm" onclick="location.href='{% url 'detalhe_cliente' cliente.id %}'">Detalhes</button>
+                        <button type="button" class="btn btn-warning btn-sm" onclick="location.href='{% url 'editar_cliente' cliente.id %}'">Alterar</button>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="confirmClose('{% url 'remover_cliente' cliente.id %}')">Excluir</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center">Nenhum cliente encontrado.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+    <script>
+        function confirmClose(url) {
+            if (confirm("Confirme para excluir o cliente selecionado.")) {
+                window.location.href = url;
+            }
+        }
+    </script>
+    
+{% endblock conteudo %}

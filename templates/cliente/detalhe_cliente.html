@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block titulo_conteudo %} Detalhes do Cliente {% endblock %}
+
+{% block conteudo %}
+<h2>Detalhes do Cliente</h2>
+
+<p><strong>ID:</strong> {{ cliente.id }}</p>
+<p><strong>Nome:</strong> {{ cliente.nome }}</p>
+<p><strong>Email:</strong> {{ cliente.cpf }}</p>
+<p><strong>Telefone:</strong> {{ cliente.datanasc }}</p>
+
+<a href="{% url 'lista_cliente' %}" class="btn btn-secondary">Voltar</a>
+{% endblock %}

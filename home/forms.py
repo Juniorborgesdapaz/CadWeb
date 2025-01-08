@@ -36,17 +36,13 @@ class CategoriaForm(forms.ModelForm):
           
           return ordem
 
-     # def clean(self):
-     #      cleaned_data = super().clean()
-     #      nome = cleaned_data().get('nome')
-     #      ordem = cleaned.data().get('ordem')
 
-     #      if len(nome) < 3:
-     #           raise forms.ValidationError("O nome deve ter pelo menos 3 caracteres.")
-     #      return nome
-
-     # Validação generica:
-     # def validar_valor(valor):
-     #      if len(valor) < 3:
-     #           raise forms.ValidationError("O campo deve ter pelo menos 3 caracteres.")
-     #      return valor
+class ClienteForm(forms.ModelForm):
+    class Meta:
+        model = Cliente
+        fields = ['nome', 'cpf', 'datanasc']
+        widgets = {
+            'nome':forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome'}),
+            'cpf':forms.TextInput(attrs={'class': 'cpf form-control', 'placeholder': 'C.P.F'}),
+            'datanasc': forms.DateInput(attrs={'class': 'data form-control', 'placeholder': 'Data de Nascimento'}, format='%d/%m/%Y'),
+        }
