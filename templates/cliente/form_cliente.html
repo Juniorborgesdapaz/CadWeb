@@ -12,8 +12,6 @@
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Salvar</button>
-    </form>
-    
-    <a href="{% url 'lista_cliente' %}" class="btn btn-secondary">Voltar</a>
+        <button type="submit" class="btn btn-primary">Enviar</button>
+            <button type="button" class="btn btn-secondary" onclick="location.href='{% url 'lista_cliente' %}'">Voltar</button>
 {% endblock %}
