@@ -2,6 +2,8 @@ from django.forms import ModelForm
 from django import forms
 from .models import *
 
+from datetime import date
+
 class CategoriaForm(forms.ModelForm):
      class Meta:
           model = Categoria
@@ -38,11 +40,38 @@ class CategoriaForm(forms.ModelForm):
 
 
 class ClienteForm(forms.ModelForm):
-    class Meta:
-        model = Cliente
-        fields = ['nome', 'cpf', 'datanasc']
-        widgets = {
-            'nome':forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome'}),
-            'cpf':forms.TextInput(attrs={'class': 'cpf form-control', 'placeholder': 'C.P.F'}),
-            'datanasc': forms.DateInput(attrs={'class': 'data form-control', 'placeholder': 'Data de Nascimento'}, format='%d/%m/%Y'),
-        }
+     class Meta:
+          model = Cliente 
+          fields = ['nome', 'cpf', 'datanasc',]
+          widgets = {
+               'nome':forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome'}),
+               'cpf':forms.TextInput(attrs={'class': 'cpf form-control', 'placeholder': 'C.P.F'}),
+               'datanasc':forms.DateInput(attrs={'class': 'data form-control', 'placeholder': 'Data de Nascimento'}, format='%d/%m/%Y'),
+          }
+
+     def clean_nome(self):
+         nome = self.cleaned_data.get('nome')
+         if Cliente.objects.filter(nome=nome).exclude(pk=self.instance.pk).exists():
+             raise forms.ValidationError("Já existe um cliente com esse nome.")
+         if len(nome) < 3:
+             raise forms.ValidationError("O nome deve ter pelo menos 3 caracteres.")
+         return nome
+
+     def clean_cpf(self):
+         cpf = self.cleaned_data.get('cpf')
+         if Cliente.objects.filter(cpf=cpf).exclude(pk=self.instance.pk).exists():
+             raise forms.ValidationError("Já existe um cliente com esse C.P.F.")
+         if len(cpf) != 14:  # Exemplo: "000.000.000-00"
+             raise forms.ValidationError("O CPF deve conter 14 caracteres (incluindo pontos e traços).")
+         return cpf
+
+     
+     def clean_datanasc(self):
+          datanasc = self.cleaned_data.get('datanasc')
+          if not datanasc:
+               raise forms.ValidationError("A data de nascimento é obrigatória.")
+          if datanasc >= date.today():
+               raise forms.ValidationError("A data de nascimento não pode ser maior ou igual à data atual.")
+          if datanasc.year < 1900:
+               raise forms.ValidationError("A data de nascimento não pode ser anterior ao ano de 1900.")
+          return datanasc
