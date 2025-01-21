@@ -17,6 +17,7 @@
     <thead>
         <tr>
             <th>ID</th>
+            <th>Imagem</th> <!-- Coluna para Imagem -->
             <th>Nome</th>
             <th>Preço (R$)</th>
             <th>Categoria</th>
@@ -27,11 +28,13 @@
     <tbody>
         {% for produto in listaProduto %}
         <tr>
-            <td>{{ produto.id }}</td>
-            <td>{{ produto.nome }}</td>
-            <td>{{ produto.preco }}</td>
-            <td>{{ produto.categoria }}</td>
-            <td>{{ produto.estoque.qtde }}</td>
+            <td style="text-align: center; vertical-align: middle;">{{produto.id}}</td>
+            <td style="text-align: center; vertical-align: middle;"><img src="{{ produto.img_base64 }}" width="55px" height="auto"></td>
+            <td style="vertical-align: middle;">{{produto.nome}}</td>
+            <td style="text-align: center; vertical-align: middle;">{{produto.preco}}</td>
+            <td style="text-align: center; vertical-align: middle;">{{produto.categoria}}</td>
+            <td style="text-align: center; vertical-align: middle;">{{ produto.estoque.qtde }}</td>
+            <td style="vertical-align: middle;">
 
             <td>
                 <button type="button" class="btn btn-info" onclick="location.href='{% url 'detalhe_produto' produto.id%}'">Detalhes</button>
@@ -43,7 +46,7 @@
         </tr>
         {% empty %}
         <tr>
-            <td colspan="5" class="text-center">Nenhum produto encontrado.</td>
+            <td colspan="7" class="text-center">Nenhum produto encontrado.</td>
         </tr>
         {% endfor %}
     </tbody>
