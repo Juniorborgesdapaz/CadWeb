@@ -29,4 +29,10 @@ urlpatterns = [
     path('teste3/', views.teste3, name='teste3'),
     #Ajax
     path('buscar_dados/<str:app_modelo>/', views.buscar_dados, name='buscar_dados'),
+
+    path('pedido/lista', views.pedido, name='listaPedido'),
+    path('pedido/novo_pedido/<int:id>', views.novo_pedido, name='novo_pedido'),
+    path('detalhes_pedido/<int:id>', views.detalhes_pedido, name='detalhes_pedido'),
+    path('editar_pedido/<int:id>/', views.editar_pedido, name='editar_pedido'),
+    path('remover_pedido/<int:id>/', views.remover_pedido, name='remover_pedido'),
 ]

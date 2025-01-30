@@ -29,6 +29,7 @@
                     <td>{{ cliente.cpf }}</td>
                     <td>{{ cliente.datanasc }}</td>
                     <td>
+                        <button type="button" class="btn btn-primary" onclick="location.href='{% url 'novo_pedido' cliente.id%}'">Novo Pedido</button>
                         <button type="button" class="btn btn-info btn-sm" onclick="location.href='{% url 'detalhe_cliente' cliente.id %}'">Detalhes</button>
                         <button type="button" class="btn btn-warning btn-sm" onclick="location.href='{% url 'editar_cliente' cliente.id %}'">Alterar</button>
                         <button type="button" class="btn btn-danger btn-sm" onclick="confirmClose('{% url 'remover_cliente' cliente.id %}')">Excluir</button>

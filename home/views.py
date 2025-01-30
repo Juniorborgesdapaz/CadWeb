@@ -214,3 +214,81 @@ def buscar_dados(request, app_modelo):
     resultados = modelo.objects.filter(nome__icontains=termo)
     dados = [{'id': obj.id, 'nome': obj.nome} for obj in resultados]
     return JsonResponse(dados, safe=False)
+
+
+
+def pedido(request):
+    listaPedido = Pedido.objects.all().order_by('-id')
+    return render(request, 'pedido/lista.html', {'listaPedido': listaPedido})
+
+
+def novo_pedido(request,id):
+    if request.method == 'GET':
+        try:
+            cliente = Cliente.objects.get(pk=id)
+        except Cliente.DoesNotExist:
+            # Caso o registro não seja encontrado, exibe a mensagem de erro
+            messages.error(request, 'Registro não encontrado')
+            return redirect('cliente')  # Redireciona para a listagem
+        # cria um novo pedido com o cliente selecionado
+        pedido = Pedido(cliente=cliente)
+        form = PedidoForm(instance=pedido)# cria um formulario com o novo pedido
+        return render(request, 'pedido/formulario.html',{'form': form,})
+    else: # se for metodo post, salva o pedido.
+        form = PedidoForm(request.POST)
+        if form.is_valid():
+            pedido = form.save()
+            return redirect('pedido')
+        
+
+def detalhes_pedido(request, id):
+    try:
+        pedido = Pedido.objects.get(pk=id)
+    except Pedido.DoesNotExist:
+        messages.error(request, 'Registro não encontrado')
+        return redirect('pedido')
+    
+    if request.method == 'GET':
+        itemPedido = ItemPedido(pedido=pedido)
+        form = ItemPedidoForm(instance=itemPedido)
+    else:
+        form = ItemPedidoForm(request.POST)
+
+    contexto = {
+        'pedido': pedido,
+        'form': form,
+    }
+
+    return render(request, 'pedido/detalhes.html', contexto)
+
+def editar_pedido(request, id):
+    try:
+        pedido = Pedido.objects.get(pk=id)
+    except:
+        messages.error(request, 'Registro não encontrado')
+        return redirect('listaPedido')
+
+    if (request.method == 'POST'):
+        form = PedidoForm(request.POST, instance=pedido)
+        if form.is_valid():
+            produto = form.save()
+            listaPedido=[]
+            listaPedido.append(produto)
+            # return render(request, 'produto/lista.html', {'listaProduto':listaProduto,})
+            return redirect('listaPedido')
+
+    else: 
+        form = PedidoForm(instance=pedido)
+    
+    return render(request, 'pedido/formulario.html', {'form':form,})
+
+def remover_pedido(request, id):
+    try:
+        pedido = Pedido.objects.get(pk=id)
+        pedido.delete()
+        messages.success(request, 'Exclusão realizda com Sucesso.')
+    except:
+        messages.error(request, 'Registro não encontrado')
+        return redirect('listaPedido')
+    
+    return redirect('listaPedido')
