@@ -227,39 +227,39 @@ def novo_pedido(request,id):
         try:
             cliente = Cliente.objects.get(pk=id)
         except Cliente.DoesNotExist:
-            # Caso o registro não seja encontrado, exibe a mensagem de erro
             messages.error(request, 'Registro não encontrado')
-            return redirect('cliente')  # Redireciona para a listagem
-        # cria um novo pedido com o cliente selecionado
+            return redirect('cliente')  
         pedido = Pedido(cliente=cliente)
-        form = PedidoForm(instance=pedido)# cria um formulario com o novo pedido
+        form = PedidoForm(instance=pedido)
         return render(request, 'pedido/formulario.html',{'form': form,})
-    else: # se for metodo post, salva o pedido.
+    else: 
         form = PedidoForm(request.POST)
         if form.is_valid():
             pedido = form.save()
-            return redirect('pedido')
+            return redirect('listaPedido')
         
 
 def detalhes_pedido(request, id):
     try:
         pedido = Pedido.objects.get(pk=id)
     except Pedido.DoesNotExist:
+        # Caso o registro não seja encontrado, exibe a mensagem de erro
         messages.error(request, 'Registro não encontrado')
-        return redirect('pedido')
+        return redirect('pedido')  # Redireciona para a listagem    
     
     if request.method == 'GET':
         itemPedido = ItemPedido(pedido=pedido)
         form = ItemPedidoForm(instance=itemPedido)
     else:
         form = ItemPedidoForm(request.POST)
-
+        # aguardando implementação POST, salvar item
+    
     contexto = {
         'pedido': pedido,
         'form': form,
     }
+    return render(request, 'pedido/detalhes.html',contexto )
 
-    return render(request, 'pedido/detalhes.html', contexto)
 
 def editar_pedido(request, id):
     try:
@@ -281,6 +281,8 @@ def editar_pedido(request, id):
         form = PedidoForm(instance=pedido)
     
     return render(request, 'pedido/formulario.html', {'form':form,})
+
+
 
 def remover_pedido(request, id):
     try:
