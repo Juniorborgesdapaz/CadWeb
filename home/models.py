@@ -84,3 +84,44 @@ class ItemPedido(models.Model):
 
     def __str__(self):
         return f"{self.produto.nome} (Qtde: {self.qtde}) - Preço Unitário: {self.preco}"
+
+    
+    @property
+    def calculoTotal(self):
+        total = self.qtde * self.preco
+        return total
+
+    @property
+    def total(self):
+        total = sum(item.qtde * item.preco for item in self.itempedido_set.all())
+        return total
+
+
+class Pagamento(models.Model):
+    DINHEIRO = 1
+    CREDITO = 2
+    DEBITO = 3
+    PIX = 4
+    TICKET = 5
+    OUTRA = 6
+
+    FORMA_CHOICES = [
+        (DINHEIRO, 'Dinheiro'),
+        (CREDITO, 'Credito'),
+        (DEBITO, 'Debito'),
+        (PIX, 'Pix'),
+        (TICKET, 'Ticket'),
+        (OUTRA, 'Escambo'),
+    ]
+
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE) 
+    forma = models.IntegerField(choices=FORMA_CHOICES)
+    valor = models.DecimalField(max_digits = 10, decimal_places=2, blank = False )
+    data_pgto = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def data_pgtof(self):
+        """Retorna a data formatada: DD/MM/AAAA HH:MM"""
+        if self.data_pgto:
+            return self.data_pgto.strftime('%d/%m/%Y %H:%M')
+        return None

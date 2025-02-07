@@ -125,6 +125,7 @@ class PedidoForm(forms.ModelForm):
           }
 
 
+
 class ItemPedidoForm(forms.ModelForm):
      class Meta:
           model = ItemPedido
@@ -135,3 +136,29 @@ class ItemPedidoForm(forms.ModelForm):
                'produto': forms.HiddenInput(),
                'qtde': forms.TextInput(attrs={'class': 'inteiro form-control',}),
           }
+     
+     def clean_qtde(self):
+        qtde = self.cleaned_data.get('qtde')
+        if not isinstance(qtde, int) or qtde < 0:
+            raise ValidationError('A quantidade deve ser um número inteiro positivo.')
+        return qtde
+
+class PagamentoForm(forms.ModelForm):
+    class Meta:
+        model = Pagamento
+        fields = ['pedido','forma','valor']
+        widgets = {
+            'pedido': forms.HiddenInput(),  # Campo oculto para armazenar o ID
+            # Usando Select para renderizar as opções
+            'forma': forms.Select(attrs={'class': 'form-control'}),  
+            'valor':forms.TextInput(attrs={
+                'class': 'money form-control',
+                'maxlength': 500,
+                'placeholder': '0.000,00'
+            }),
+         }
+        
+    def __init__(self, *args, **kwargs):
+            super(PagamentoForm, self).__init__(*args, **kwargs)
+            self.fields['valor'].localize = True
+            self.fields['valor'].widget.is_localized = True       
