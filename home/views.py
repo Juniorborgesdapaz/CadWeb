@@ -2,21 +2,22 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import *
 from .forms import *
-from .models import Cliente
-from .forms import ClienteForm
-from .models import Produto, Estoque
-from .forms import ProdutoForm, EstoqueForm
 from django.http import JsonResponse
 from django.apps import apps
+# from datetime import date 
+from django.contrib.auth.decorators import login_required
+import datetime
+
+@login_required
 def index(request):
     return render(request,'index.html')
-
+@login_required
 def categoria(request): 
     contexto = {
         'lista': Categoria.objects.all().order_by('-id'),
     }
     return render(request, 'categoria/lista.html', contexto)
-
+@login_required
 def form_categoria(request):
     if (request.method == 'POST'):
         form = CategoriaForm(request.POST)
@@ -32,7 +33,7 @@ def form_categoria(request):
     
     return render(request, 'categoria/formulario.html', {'form': form,})
 
-
+@login_required
 def editar_categoria(request, id):
     try:
         categoria = Categoria.objects.get(pk=id)
@@ -54,7 +55,7 @@ def editar_categoria(request, id):
     
     return render(request, 'categoria/formulario.html', {'form':form,})
 
-
+@login_required
 def remover_categoria(request, id):
     try:
         categoria = Categoria.objects.get(pk=id)
@@ -65,9 +66,9 @@ def remover_categoria(request, id):
         return redirect('lista')
     
     return redirect('lista')
-    # return render(request, 'categoria/lista.html')
+    
 
-
+@login_required
 def detalhe_categoria(request, id):
     try:
         categoria = get_object_or_404(Categoria, pk=id)
@@ -76,12 +77,12 @@ def detalhe_categoria(request, id):
         return redirect('lista')
 
     return render(request, 'categoria/detalhes.html', {'categoria':categoria,})
-
+@login_required
 def lista_cliente(request):
     clientes = Cliente.objects.all().order_by('-id')
     return render(request, 'cliente/lista_cliente.html', {'lista': clientes})
 
-# Função para cadastrar um novo cliente
+@login_required
 def form_cliente(request):
     if request.method == 'POST':
         form = ClienteForm(request.POST)
@@ -94,7 +95,7 @@ def form_cliente(request):
     
     return render(request, 'cliente/form_cliente.html', {'form': form})
 
-# Função para editar um cliente
+@login_required
 def editar_cliente(request, id):
     cliente = get_object_or_404(Cliente, pk=id)
     if request.method == 'POST':
@@ -108,27 +109,27 @@ def editar_cliente(request, id):
     
     return render(request, 'cliente/form_cliente.html', {'form': form})
 
-# Função para remover um cliente
+@login_required
 def remover_cliente(request, id):
     cliente = get_object_or_404(Cliente, pk=id)
     cliente.delete()
     messages.success(request, 'Cliente removido com sucesso.')
     return redirect('lista_cliente')
 
-# Função para ver os detalhes de um cliente
+@login_required
 def detalhe_cliente(request, id):
     cliente = get_object_or_404(Cliente, pk=id)
     return render(request, 'cliente/detalhe_cliente.html', {'cliente': cliente})
 
 
-# Função para produto
+@login_required
 def produto(request):
     contexto = {
         'listaProduto': Produto.objects.all().order_by('-id'),
     }
     return render(request, 'produto/lista.html', contexto)
 
-# Cadastro de produto
+@login_required
 def form_produto(request):
     if (request.method == 'POST'):
         form = ProdutoForm(request.POST)
@@ -144,7 +145,7 @@ def form_produto(request):
     
     return render(request, 'produto/formulario.html', {'form': form,})
 
-# Edição de produto
+@login_required
 def editar_produto(request, id):
     produto = get_object_or_404(Produto, pk=id)
     if request.method == 'POST':
@@ -159,19 +160,19 @@ def editar_produto(request, id):
         form = ProdutoForm(instance=produto)
     return render(request, 'produto/formulario.html', {'form': form})
 
-# Remoção de produto
+@login_required
 def remover_produto(request, id):
     produto = get_object_or_404(Produto, pk=id)
     produto.delete()
     messages.success(request, 'Produto removido com sucesso.')
     return redirect('listaProduto')
 
-# Detalhes de produto
+@login_required
 def detalhe_produto(request, id):
     produto = get_object_or_404(Produto, pk=id)
     return render(request, 'produto/detalhes.html', {'produto': produto})
 
-# Ajuste de estoque
+@login_required
 def ajustar_estoque(request, id):
     produto = get_object_or_404(Produto, pk=id)
     estoque = produto.estoque if hasattr(produto, 'estoque') else None  # Verifica se o produto tem estoque
@@ -188,16 +189,16 @@ def ajustar_estoque(request, id):
     else:
         form = EstoqueForm(instance=estoque)
     return render(request, 'produto/estoque.html', {'form': form})
-
+@login_required
 def teste1(request):
     return render (request, 'testes/teste1.html')
-
+@login_required
 def teste2(request):
     return render (request, 'testes/teste2.html')
-
+@login_required
 def teste3(request):
     return render (request, 'testes/teste3.html')
-
+@login_required
 def buscar_dados(request, app_modelo):
     termo = request.GET.get('q', '') # pega o termo digitado
     try:
@@ -216,12 +217,12 @@ def buscar_dados(request, app_modelo):
     return JsonResponse(dados, safe=False)
 
 
-
+@login_required
 def pedido(request):
     listaPedido = Pedido.objects.all().order_by('-id')
     return render(request, 'pedido/lista.html', {'listaPedido': listaPedido})
 
-
+@login_required
 def novo_pedido(request,id):
     if request.method == 'GET':
         try:
@@ -241,45 +242,7 @@ def novo_pedido(request,id):
             return redirect('listaPedido')
 
 
-
-
-# def detalhes_pedido(request, id):
-#     try:
-#         pedido = Pedido.objects.get(pk=id)
-#     except Pedido.DoesNotExist:
-#         messages.error(request, 'Registro não encontrado')
-#         return redirect('listaPedido')   
-    
-#     if request.method == 'GET':
-#         itemPedido = ItemPedido(pedido=pedido)
-#         form = ItemPedidoForm(instance=itemPedido)
-#     else: # method Post
-#         form = ItemPedidoForm(request.POST)
-#         if form.is_valid():
-#             item_pedido = form.save(commit=False) # commit=False retorna o objeto item_pedido vindo do form para fazermos modificações adicionais antes de salvá-la, colocar o preço do produto, verificar estoque.
-#             item_pedido.preco = item_pedido.produto.preco # acessando o produto do relacionamento
-#             try:
-#                 if item_pedido.produto.estoque >= item_pedido.qtde:
-#                         item_pedido.produto.estoque = item_pedido.produto.estoque -  item_pedido.qtde
-#                         item_pedido.save()
-#                 return item_pedido.produto.estoque
-#             except:
-#                 messages.error(request, 'Quantidade pedida é insuficientes para o que tem no estoque.')
-#                 # exibe uma mensagem informando sobre isso não ter em estoque
-#             # realizar aqui o tratamento do estoque, para isso
-#             # Pegar o estoque (item_pedido.produto.estoque do relacionamento) atual 
-#             # verificar se a quantidade (item_pedido.produto.estoque.qtde) é suficiente para o item solicitado (item_pedido.qtde)
-#             # Se não houver estoque suficiente, você pode adicionar uma mensagem de erro e não salvar a operação
-#             # Se sim, decrementar a quantidade do item no estoque do produto e salvar os objetos estoque e item_pedido
-#         else:
-#              messages.error(request, 'Erro ao adicionar produto')
-                  
-#     contexto = {
-#         'pedido': pedido,
-#         'form': form,
-#     }
-#     return render(request, 'pedido/detalhes.html',contexto )
-
+@login_required
 def detalhes_pedido(request, id):
     try:
         pedido = Pedido.objects.get(pk=id)
@@ -323,7 +286,7 @@ def detalhes_pedido(request, id):
     }
     return render(request, 'pedido/detalhes.html', contexto)
 
-
+@login_required
 def editar_pedido(request, id):
     try:
         pedido = Pedido.objects.get(pk=id)
@@ -337,39 +300,38 @@ def editar_pedido(request, id):
             produto = form.save()
             listaPedido=[]
             listaPedido.append(produto)
-            # return render(request, 'produto/lista.html', {'listaProduto':listaProduto,})
+            
             return redirect('listaPedido')
 
     else: 
         form = PedidoForm(instance=pedido)
     
     return render(request, 'pedido/formulario.html', {'form':form,})
-
+@login_required
 def remover_item_pedido(request, id):
     try:
         item_pedido = ItemPedido.objects.get(pk=id)
     except ItemPedido.DoesNotExist:
-        # Caso o registro não seja encontrado, exibe a mensagem de erro
+        
         messages.error(request, 'Registro não encontrado')
         return redirect('detalhes_pedido', id=id)
     
-    pedido_id = item_pedido.pedido.id  # Armazena o ID do pedido antes de remover o item
-    estoque = item_pedido.produto.estoque  # Obtém o estoque do produto
-    estoque.qtde += item_pedido.qtde  # Devolve a quantidade do item ao estoque
-    estoque.save()  # Salva as alterações no estoque
-    # Remove o item do pedido
+    pedido_id = item_pedido.pedido.id  
+    estoque = item_pedido.produto.estoque  
+    estoque.qtde += item_pedido.qtde  
+    estoque.save()  
     item_pedido.delete()
     messages.success(request, 'Operação realizada com Sucesso')
 
 
-    # Redireciona de volta para a página de detalhes do pedido
+   
     return redirect('detalhes_pedido', id=pedido_id)
 
 
 
-    # Redireciona de volta para a página de detalhes do pedido
+    
     return redirect('detalhes_pedido', id=pedido_id)
-
+@login_required
 def remover_pedido(request, id):
     try:
         pedido = Pedido.objects.get(pk=id)
@@ -381,7 +343,7 @@ def remover_pedido(request, id):
     
     return redirect('listaPedido')
 
-
+@login_required
 def editar_item_pedido(request, id):
     try:
         item_pedido = ItemPedido.objects.get(pk=id)
@@ -414,16 +376,6 @@ def editar_item_pedido(request, id):
             else:
                 messages.success(request, 'Quantidade em estoque insuficiente para o produto.')
 
-            # realizar aqui o tratamento do estoque
-            # Pegar a nova quantidade do item pedido
-            # Obtém o estoque atual do produto
-            # Verifica se há estoque suficiente para a nova quantidade
-            # Se não mostras msg Quantidade em estoque insuficiente para o produto.
-            # Se sim
-            # Pegar a quantidade anterior ao estoque
-            # Decrementa a nova quantidade do estoque
-            # Salva as alterações no estoque
-            # Salva o item do pedido após ajustar o estoque
 
             return redirect('detalhes_pedido', id=pedido.id)
     else:
@@ -436,7 +388,7 @@ def editar_item_pedido(request, id):
     }
     return render(request, 'pedido/detalhes.html', contexto)
 
-
+@login_required
 def form_pagamento(request,id):
     try:
         pedido = Pedido.objects.get(pk=id)
@@ -458,10 +410,10 @@ def form_pagamento(request,id):
         form = PagamentoForm(instance=pagamento)
         
         
-    # prepara o formulário para um novo pagamento
 
     contexto = {
         'pedido': pedido,
         'form': form,
     }    
     return render(request, 'pedido/pagamento.html',contexto)
+    

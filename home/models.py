@@ -74,6 +74,63 @@ class Pedido(models.Model):
             return self.data_pedido.strftime('%d/%m/%Y %H:%M')
         return None
 
+    @property 
+    def total(self):
+        total = sum(item.qtde * item.preco for item in self.itempedido_set.all())
+        return total
+    
+    @property
+    def qtdeItens(self):
+        return self.itempedido_set.count()
+    
+    @property
+    def pagamentos(self):
+        return Pagamento.objects.filter(pedido=self)
+
+    @property
+    def total_pago(self):
+        total = sum(pagamento.valor for pagamento in self.pagamentos.all())
+        return total
+    
+    @property
+    def debito(self):
+        valor_debito = self.total - self.total_pago 
+        return valor_debito
+    
+    @property
+    def chave_acesso(self):
+        chave_base = f"{self.id}{self.data_pedido.strftime('%Y%m%d%H%M%S')}"
+        return hashlib.sha256(chave_base.encode()).hexdigest()[:44]
+    
+    @property
+    def total_pedido(self):
+        return sum(item.calculoTotal for item in self.itempedido_set.all())
+    
+    @property
+    def icms(self):
+        return self.total_pedido * Decimal('0.18')
+
+    @property
+    def pis(self):
+        return self.total_pedido * Decimal('0.0165')
+
+    @property
+    def ipi(self):
+        return self.total_pedido * Decimal('0.05')
+
+    @property
+    def cofins(self):
+        return self.total_pedido * Decimal('0.076')
+
+    @property
+    def total_impostos(self):
+        return self.icms + self.pis + self.ipi + self.cofins
+    
+    @property
+    def total_com_impostos(self):
+        return self.total_pedido + self.total_impostos
+    
+
 
 
 class ItemPedido(models.Model):
@@ -84,7 +141,6 @@ class ItemPedido(models.Model):
 
     def __str__(self):
         return f"{self.produto.nome} (Qtde: {self.qtde}) - Preço Unitário: {self.preco}"
-
     
     @property
     def calculoTotal(self):
@@ -111,7 +167,7 @@ class Pagamento(models.Model):
         (DEBITO, 'Debito'),
         (PIX, 'Pix'),
         (TICKET, 'Ticket'),
-        (OUTRA, 'Escambo'),
+        (OUTRA, 'Outra'),
     ]
 
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE) 
