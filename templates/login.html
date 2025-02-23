@@ -12,78 +12,104 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <style>
-        /* Estilos personalizados */
+        /* Estilos Gerais */
         body {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); /* Gradiente de fundo */
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             font-family: 'Arial', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            padding: 20px;
         }
+
+        /* Cartão com efeito de vidro */
         .card {
-            border-radius: 20px; /* Bordas arredondadas mais suaves */
-            border: none;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra suave */
-            background-color: #fff;
+            backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
             padding: 2rem;
             width: 100%;
-            max-width: 380px;
-            transition: transform 0.3s ease; /* Transição suave ao passar o mouse */
+            max-width: 400px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+
         .card:hover {
-            transform: scale(1.05); /* Aumento de escala ao passar o mouse */
+            transform: scale(1.03);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
         }
+
+        /* Título */
         h3 {
-            color: #333;
+            color: white;
             font-size: 1.8rem;
             margin-bottom: 1.5rem;
             text-align: center;
         }
+
+        /* Estilo dos campos */
         .form-label {
             font-size: 0.9rem;
-            color: #333;
+            color: white;
         }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
         .form-control:focus {
-            border-color: #2575fc; /* Cor da borda ao focar */
-            box-shadow: 0 0 10px rgba(37, 117, 252, 0.5); /* Efeito de foco suave */
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
         }
+
         .input-group-text {
-            background-color: #f1f1f1;
-            border: 1px solid #ddd;
-            color: #2575fc;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
         }
+
         .btn-primary {
-            background-color: #2575fc;
-            border-color: #2575fc;
+            background-color: #ff4b5c;
+            border: none;
             padding: 12px;
             font-size: 1.1rem;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
         }
+
         .btn-primary:hover {
-            background-color: #6a11cb;
-            border-color: #6a11cb;
+            background-color: #ff1f3d;
+            transform: scale(1.05);
         }
-        .alert {
-            margin-top: 10px;
+
+        /* Botão de alternância da senha */
+        .toggle-password {
+            cursor: pointer;
         }
-        .input-group-text i {
-            color: #2575fc;
-        }
+
         .small {
-            color: #888;
+            color: white;
             font-size: 0.8rem;
         }
     </style>
 </head>
 <body>
+
     <div class="card">
-        <h3><i class="fas fa-lock me-2"></i> Login</h3>
-        
+        <h3><i class="fas fa-user-lock"></i> Acesso Restrito</h3>
+
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-danger d-flex align-items-center" role="alert">
-                    <i class="fas fa-times-circle me-2"></i>
+                    <i class="fas fa-exclamation-triangle me-2"></i>
                     {{ message }}
                 </div>
             {% endfor %}
@@ -91,7 +117,7 @@
 
         <form method="post">
             {% csrf_token %}
-            
+
             {% if form.non_field_errors %}
                 <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center" role="alert">
                     <i class="fas fa-times-circle me-2"></i>
@@ -102,6 +128,7 @@
                 </div>
             {% endif %}
 
+            <!-- Campo Usuário -->
             <div class="mb-3">
                 <label class="form-label" for="username">Usuário</label>
                 <div class="input-group">
@@ -110,15 +137,18 @@
                 </div>
             </div>
 
+            <!-- Campo Senha -->
             <div class="mb-4">
                 <label class="form-label" for="password">Senha</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-lock"></i></span>
                     <input type="password" name="password" id="password" class="form-control" placeholder="Digite sua senha" required>
+                    <span class="input-group-text toggle-password"><i class="fas fa-eye"></i></span>
                 </div>
                 <small class="small">Diferenciamos maiúsculas e minúsculas</small>
             </div>
 
+            <!-- Botão Entrar -->
             <button type="submit" class="btn btn-primary w-100">
                 <i class="fas fa-sign-in-alt me-2"></i>Entrar
             </button>
@@ -128,5 +158,24 @@
     <!-- Scripts necessários -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script para alternar visibilidade da senha -->
+    <script>
+        $(document).ready(function() {
+            $(".toggle-password").click(function() {
+                let input = $("#password");
+                let icon = $(this).find("i");
+
+                if (input.attr("type") === "password") {
+                    input.attr("type", "text");
+                    icon.removeClass("fa-eye").addClass("fa-eye-slash");
+                } else {
+                    input.attr("type", "password");
+                    icon.removeClass("fa-eye-slash").addClass("fa-eye");
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>
