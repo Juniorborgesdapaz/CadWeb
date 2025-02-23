@@ -39,4 +39,5 @@ urlpatterns = [
     path('editar_item_pedido/<int:id>/', views.editar_item_pedido, name='editar_item_pedido'),
     path('editar_item_pedido/<int:id>/', views.editar_item_pedido, name='editar_item_pedido'),
     path('form_pagamento/<int:id>/', views.form_pagamento, name='form_pagamento'),
+    path('nota_fiscal/<int:id>/', views.nota_fiscal, name='nota_fiscal'),
 ]

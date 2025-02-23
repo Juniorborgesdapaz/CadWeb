@@ -417,3 +417,7 @@ def form_pagamento(request,id):
     }    
     return render(request, 'pedido/pagamento.html',contexto)
     
+@login_required
+def nota_fiscal(request, id):
+    pedido = get_object_or_404(Pedido, pk=id)
+    return render(request, 'pedido/nota_fiscal.html', {'pedido': pedido}) 

@@ -34,6 +34,7 @@
       <td>
         <button type="button" class="btn btn-info"
           onclick="location.href='{% url 'detalhes_pedido' pedido.id%}'">Detalhes</button>
+          <button type="button" class="btn btn-dark" onclick="location.href='{% url 'nota_fiscal' pedido.id%}'">Nota Fiscal</button>
   
         <button type="button" class="btn btn-danger"
           onclick="confirmClose('{% url 'remover_pedido' pedido.id%}')">Remover</button>

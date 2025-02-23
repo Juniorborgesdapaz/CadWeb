@@ -1,5 +1,8 @@
 import locale
 from django.db import models
+import hashlib
+from decimal import Decimal
+
 
 class Categoria(models.Model):
     nome = models.CharField(max_length=100)
